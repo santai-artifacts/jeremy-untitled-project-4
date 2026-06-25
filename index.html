@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Snake</title>
+<title>Worm</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -241,7 +241,7 @@
     <header>
       <div class="title">
         <span class="dot"></span>
-        <h1>Snake</h1>
+        <h1>Worm</h1>
       </div>
       <div class="scores">
         <div class="score-card">
@@ -302,7 +302,7 @@
   const SPEEDS = { slow: 140, normal: 100, fast: 65 };
 
   // Game state (in-memory only — no persistence in the sandbox)
-  let snake, dir, nextDir, food, score, best = 0;
+  let worm, dir, nextDir, food, score, best = 0;
   let tickMs = SPEEDS.normal;
   let state = 'idle';        // idle | running | paused | over
   let acc = 0, lastTime = 0, rafId = null;
@@ -310,7 +310,7 @@
 
   function reset() {
     const mid = Math.floor(GRID / 2);
-    snake = [
+    worm = [
       { x: mid, y: mid },
       { x: mid - 1, y: mid },
       { x: mid - 2, y: mid },
@@ -326,7 +326,7 @@
     let p;
     do {
       p = { x: (Math.random() * GRID) | 0, y: (Math.random() * GRID) | 0 };
-    } while (snake.some(s => s.x === p.x && s.y === p.y));
+    } while (worm.some(s => s.x === p.x && s.y === p.y));
     food = p;
   }
 
@@ -338,16 +338,16 @@
 
   function step() {
     dir = nextDir;
-    const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+    const head = { x: worm[0].x + dir.x, y: worm[0].y + dir.y };
 
     // wall or self collision = game over
     if (head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID ||
-        snake.some(s => s.x === head.x && s.y === head.y)) {
+        worm.some(s => s.x === head.x && s.y === head.y)) {
       gameOver();
       return;
     }
 
-    snake.unshift(head);
+    worm.unshift(head);
 
     if (head.x === food.x && head.y === food.y) {
       score++;
@@ -356,7 +356,7 @@
       foodPulse = 1;
       placeFood();
     } else {
-      snake.pop();
+      worm.pop();
     }
   }
 
@@ -403,10 +403,10 @@
               cell - 6 + grow, cell - 6 + grow, 6);
     ctx.shadowBlur = 0;
 
-    // snake
-    for (let i = snake.length - 1; i >= 0; i--) {
-      const s = snake[i];
-      const t = i / Math.max(1, snake.length - 1); // 0 head -> 1 tail
+    // worm
+    for (let i = worm.length - 1; i >= 0; i--) {
+      const s = worm[i];
+      const t = i / Math.max(1, worm.length - 1); // 0 head -> 1 tail
       if (i === 0) {
         ctx.fillStyle = '#ec4899';
         ctx.shadowColor = '#ec4899';
@@ -429,7 +429,7 @@
   }
 
   function drawEyes() {
-    const h = snake[0];
+    const h = worm[0];
     const cx = h.x * cell + cell / 2;
     const cy = h.y * cell + cell / 2;
     const off = cell * 0.18;
@@ -477,7 +477,7 @@
       cancelAnimationFrame(rafId);
       rafId = null;
       ovTitle.textContent = 'Paused';
-      ovText.textContent = 'Take a breath. Your snake will wait.';
+      ovText.textContent = 'Take a breath. Your worm will wait.';
       startBtn.textContent = 'Resume';
       overlay.classList.remove('hidden');
     } else if (state === 'paused') {
